@@ -4,13 +4,22 @@
 ** Unity Logger Inject Script
 ** Do not use single line comments!
 **/
+/***************************************************************************\
+Project:      Javascript Logger for Unity3D Webplayer
+Copyright (c) Andreas Katzig, Chimera Entertainment GmbH
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
 
 window.unityLogScrollingEnabled = true;
 
 var unityLogEl = document.getElementById('unity_log');
 var unityLogStopBtn = document.getElementById('unity_log_stop_button');
-var unityLogTypes = new Array('INFO','DEBUG','WARN', 'ERROR', 'FATAL');
+var unityLogTypes = new Array('TRACE', 'INFO','DEBUG','WARN', 'ERROR', 'FATAL');
 var unityPlayerEl = null;
+var toggleBtnTxt = 'Switch log scrolling';
 
 if (typeof consoleLogEnabled == 'undefined')
 	var consoleLogEnabled = false;
@@ -25,7 +34,8 @@ function doubleZero(intgr) {
 
 function consoleLog(str) {
 	if (!consoleLogEnabled) return;
-	if (typeof console.log == 'function')
+
+	if (typeof console != 'undefined' && typeof console.log == 'function')
 		console.log(str);
 }
 
@@ -101,7 +111,7 @@ function getCSSRule(ruleName) {
 		    if (cssRule) {
                 
 				if (cssRule.selectorText.toLowerCase() == ruleName) {
-					consoleLog('Found CSS rule ' + ruleName);
+					// consoleLog('Found CSS rule ' + ruleName);
 					return cssRule;
 			   }
 			}
@@ -127,7 +137,7 @@ function createFilterBar()
 
 	for (var i in unityLogTypes)
 	{
-		filterEl.innerHTML += "<a href='#unity_log' onclick='toggleUnityLogFilter(this, \"" + unityLogTypes[i].toLowerCase() + "\");'>" + unityLogTypes[i] + "</a> ";
+		filterEl.innerHTML += "<a href='#unity_log' title='Toggle all " + unityLogTypes[i] + " messages.' onclick='toggleUnityLogFilter(this, \"" + unityLogTypes[i].toLowerCase() + "\");'>" + unityLogTypes[i] + "</a> ";
 	}
 
 	unityLogEl.parentNode.insertBefore(filterEl, unityLogEl.nextSibling);
@@ -165,7 +175,7 @@ function unityLog(logname, logtype, msg) {
 	if (lines.length > unity_log_max_entries) {
 		consoleLog('Cropping log to ' + unity_log_max_entries + ' lines');
 		var buf = '';
-		buf = lines.slice((lines.length - unity_log_max_entries), lines.length);
+		buf = lines.slice((lines.length - unity_log_max_entries + 1), lines.length);
 		consoleLog('buf is ' + buf.length + ' lines');
 		buf = buf.join('<pre');
 		unityLogEl.innerHTML = '<pre' + buf;
@@ -243,6 +253,7 @@ function ensureLog() {
 	}
 }
 
+
 function createUnityLog()
 {
 	if (unityLogEl != null) {
@@ -257,14 +268,20 @@ function createUnityLog()
 	if (unityLogStopBtn == null) {
 		unityLogStopBtn = document.createElement('input');
 		unityLogStopBtn.setAttribute('type', 'button');
-		unityLogStopBtn.setAttribute('onclick', 'window.unityLogScrollingEnabled = !window.unityLogScrollingEnabled;');
-		unityLogStopBtn.setAttribute('value', 'Toggle log scrolling');
+		unityLogStopBtn.setAttribute('onclick', 'toggleLogScrolling();');
+		unityLogStopBtn.setAttribute('value', toggleBtnTxt + " off");
+		unityLogStopBtn.setAttribute('id', 'unity_log_toggle');
 		unityLogEl.parentNode.insertBefore(unityLogStopBtn, unityLogEl.nextSibling);
 	}
 	
 	return true;
 }
 
+function toggleLogScrolling()
+{
+	window.unityLogScrollingEnabled = !window.unityLogScrollingEnabled;
+	document.getElementById("unity_log_toggle").value = toggleBtnTxt + " " + ((!window.unityLogScrollingEnabled) ? "on" : "off");
+}
 
 function getDefaultLogStyles() {
 	var styles = '#unity_log { background-color: #000; font-size: 11pt; height: 250px; width: 100%; border: 1px solid grey; overflow: auto; text-align: left; }\n';
@@ -283,9 +300,11 @@ function getDefaultLogStyles() {
 
 function appendDefaultLogStyle() {
 	var headEl = document.getElementsByTagName('head');
-	if (headEl.length == 0 || typeof headEl != 'object')
+	if (headEl.length == 0 || typeof headEl == 'undefined') // type "object" in chrome, "function" in safari
+	{
+		consoleLog('Could not apply log styles, head-element not found!');
 		return;
-
+	}
 	var css = document.createElement('style');
 	css.type = 'text/css';
 

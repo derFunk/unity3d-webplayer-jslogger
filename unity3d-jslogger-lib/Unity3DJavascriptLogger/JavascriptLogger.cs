@@ -1,4 +1,12 @@
-﻿using System;
+﻿/***************************************************************************\
+Project:      Javascript Logger for Unity3D Webplayer
+Copyright (c) Andreas Katzig, Chimera Entertainment GmbH
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+using System;
 using UnityEngine;
 using System.IO;
 using System.Reflection;
@@ -9,30 +17,51 @@ namespace ChimeraEntertainment.Unity3DJavascriptLogger
 	{
 		protected string m_loggerName;
 	    private bool m_isInitialized;
-	    private JavascriptDispatcher m_dispatcher;
+	    public readonly JavascriptLoggerDispatcher Dispatcher;
 		
-		public JavascriptLogger(Action<Action> dispatchAction, string name)
-			: this(dispatchAction)
+		public JavascriptLogger(string name)
+			: this(new JavascriptLoggerDispatchAction())
 		{
 			m_loggerName = name;
 		}
 
-		public JavascriptLogger(Action<Action> dispatchAction, Type type)
-			: this(dispatchAction)
-		{
-			m_loggerName = type.Name;
-		}
-
-		public JavascriptLogger(Action<Action> dispatchAction)
+		private JavascriptLogger(IJavascriptLoggerDispatchAction dispatchAction)
 		{
             if (m_loggerName == null)
                 m_loggerName = "DEFAULT";
 
-            m_dispatcher = new JavascriptDispatcher(dispatchAction);
+            Dispatcher = new JavascriptLoggerDispatcher(dispatchAction);
             m_isInitialized = false;
 			EnsureJavascriptEnvironment();
 		}
-
+		
+		public JavascriptLogger()
+			: this(new JavascriptLoggerDispatchAction())
+		{
+		}
+		
+		public void SetMaxLogEntries(int max)
+		{
+			Dispatcher.EvalJs("unity_log_max_entries = " + max + ";");
+		}
+		
+		public void SetConsoleDebugOutput(bool enabled)
+		{
+			Dispatcher.EvalJs("consoleLogEnabled = " + ((enabled) ? "true;" : "false;") );
+		}
+		
+		/// <summary>
+		/// Handles the standard unity log output.
+		/// </summary>
+		/// <param name='logString'>
+		/// Log string.
+		/// </param>
+		/// <param name='stackTrace'>
+		/// Stack trace.
+		/// </param>
+		/// <param name='type'>
+		/// Type.
+		/// </param>
         public void HandleUnityLog(string logString, string stackTrace, LogType type)
         {
             if (stackTrace == null)
@@ -71,7 +100,7 @@ namespace ChimeraEntertainment.Unity3DJavascriptLogger
 		/// <param name="javascript">Javascript code you want to have evaluated on the website!</param>
 		private void DispatchEvalJs(string javascript)
 		{
-            if (!m_dispatcher.EvalJs(javascript))
+            if (!Dispatcher.EvalJs(javascript))
                 throw new Exception("Dispatcher for Javascript Logger not set!");
 		}
 

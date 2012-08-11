@@ -44,8 +44,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\JsLogger.cs" />
-     <Compile Include="Assets\Scripts\JsLoggerDebugGUI.cs" />
+     <Compile Include="Assets\Scripts\Examples\JsLoggerCustomExample.cs" />
+     <Compile Include="Assets\Scripts\Examples\JsLoggerDebugGUI.cs" />
+     <Compile Include="Assets\Scripts\Examples\JsLoggerThreadExample.cs" />
+     <Compile Include="Assets\Scripts\JsLoggerCallback.cs" />
  <Reference Include="Assets\Libs\Unity3DJavascriptLogger">
  <HintPath>Assets\Libs\Unity3DJavascriptLogger.dll</HintPath>
  </Reference>

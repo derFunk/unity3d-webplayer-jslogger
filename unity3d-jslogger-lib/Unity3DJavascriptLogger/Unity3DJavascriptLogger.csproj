@@ -40,8 +40,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="JavascriptLogger.cs" />
-    <Compile Include="JavascriptDispatcher.cs" />
-    <Compile Include="JavascriptDispatchAction.cs" />
+    <Compile Include="JavascriptLoggerDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JavascriptLogger.js">
@@ -52,5 +51,6 @@
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
 </Project>
