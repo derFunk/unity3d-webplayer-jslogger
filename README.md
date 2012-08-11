@@ -1,11 +1,15 @@
 unity3d-webplayer-jslogger
-==========================
+===
 
 Easily integratable Javascript Logger for Unity3D Webplayer.
 
 See a demo [here](http://derfunk.github.com/unity3d-jslogger-demo/unity3d-jslogger-demo.html).
 
-It is threadsafe and you don't have to mess around with webfiles - all functionality comes in [__one DLL__](https://github.com/derFunk/unity3d-webplayer-jslogger/blob/master/unity3d-jslogger-project/Assets/Libs/Unity3DJavascriptLogger.dll)!
+Download the Unity3D Demo Project [here](https://github.com/downloads/derFunk/unity3d-webplayer-jslogger/unity3d-jslogger-project.zip)
+
+Features
+---
+It is threadsafe and you don't have to mess around with webfiles - all functionality comes in [__one tiny DLL__](https://github.com/derFunk/unity3d-webplayer-jslogger/blob/master/unity3d-jslogger-project/Assets/Libs/Unity3DJavascriptLogger.dll)!
 
 The Javascript Logger allows you to have as many named loggers as you wish. You can register the Javascript Logger with the Unity 3D Log-Callback.
 
