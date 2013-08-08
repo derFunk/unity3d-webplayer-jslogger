@@ -7,6 +7,7 @@ EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 using System;
+using System.Text;
 using UnityEngine;
 using System.IO;
 using System.Reflection;
@@ -116,7 +117,7 @@ namespace ChimeraEntertainment.Unity3DJavascriptLogger
             m_isInitialized = true;
 
             // execute / inject the js code into the website
-            DispatchEvalJs(JavascriptLoggerHelper.GetDefaultLoggerEnvironmentFromResource(GetType().Namespace));
+            DispatchEvalJs(JavascriptLoggerHelper.GetContentsFromResource(injectedScriptFilename: "unity3d-webplayer-jslogger.js", resNamespace: GetType().Namespace, resIds: new [] { "FileSaver.min.js", "JavascriptLogger.js"}));
 		}
 
         private static string cleanLogMessage(string msg)
@@ -166,30 +167,45 @@ namespace ChimeraEntertainment.Unity3DJavascriptLogger
 
     static class JavascriptLoggerHelper
     {
-        internal static string GetDefaultLoggerEnvironmentFromResource(string resNamespace)
+        /// <summary>
+        /// Reads the scripts from embedded resource files.
+        /// Having the javscript in a dedicated file makes it easier to edit.
+        /// Concatenates all files to be certain that the sourceUrl js comment works.
+        /// @see http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+        /// @see http://updates.html5rocks.com/2013/06/sourceMappingURL-and-sourceURL-syntax-changed
+        /// </summary>
+        /// <param name="injectedScriptFilename"></param>
+        /// <param name="resNamespace"></param>
+        /// <param name="resIds"></param>
+        /// <returns></returns>
+        internal static string GetContentsFromResource(string injectedScriptFilename, string resNamespace, params string[] resIds)
         {
-            // reads the script from a file. Having the javscript in a dedicated file makes it easier to edit
-			string resId = "JavascriptLogger.js";
-	
-#if !MONO
-			resId =  resNamespace + "." + resId;
-#endif
+            var sb = new StringBuilder();
+            sb.Append("//# sourceURL=").Append(injectedScriptFilename); // //@ sourceURL=jslogger.js
             
-			Stream jsLoggerStream =
-                Assembly.GetExecutingAssembly().GetManifestResourceStream(resId);
-		
-            // read the js file into a string
-            if (jsLoggerStream != null)
+            sb.AppendLine();
+
+            foreach (string resId in resIds)
             {
-                string jsLoggerScript = "";
-                using (var sr = new StreamReader(jsLoggerStream))
+#if !MONO
+		    	resId =  resNamespace + "." + resId;
+#endif
+                var resStream =
+                    Assembly.GetExecutingAssembly().GetManifestResourceStream(resId);
+
+                // read the js file into a string
+                if (resStream != null)
                 {
-                    jsLoggerScript = sr.ReadToEnd();
+                    string resourceText = "";
+                    using (var sr = new StreamReader(resStream))
+                    {
+                        resourceText = sr.ReadToEnd();
+                    }
+                    sb.Append(resourceText);
                 }
-                return @jsLoggerScript;
             }
-            
-			throw new Exception("js file not found!");
+
+            return sb.ToString();
         }
 
     }

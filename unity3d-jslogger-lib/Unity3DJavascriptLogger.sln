@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity3DJavascriptLogger", "Unity3DJavascriptLogger\Unity3DJavascriptLogger.csproj", "{88E56E4E-4773-41FB-AEF8-8A497A7CD1A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "..\unity3d-jslogger-project\Assembly-CSharp.csproj", "{DB604A89-7927-062D-022B-52BDB7214DCA}"
@@ -19,6 +19,9 @@ Global
 		{DB604A89-7927-062D-022B-52BDB7214DCA}.Debug|x86.Build.0 = Debug|Any CPU
 		{DB604A89-7927-062D-022B-52BDB7214DCA}.Release|x86.ActiveCfg = Release|Any CPU
 		{DB604A89-7927-062D-022B-52BDB7214DCA}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Unity3DJavascriptLogger\Unity3DJavascriptLogger.csproj

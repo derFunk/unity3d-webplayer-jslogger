@@ -1,6 +1,4 @@
-﻿//@ sourceURL=jslogger.js
-
-/**
+﻿/**
 ** Unity Logger Inject Script
 ** Do not use single line comments!
 **/
@@ -105,7 +103,8 @@ function getCSSRule(ruleName) {
 			if (styleSheet.cssRules) {
 			   cssRule = styleSheet.cssRules[ii];
 			} else {
-			   cssRule = styleSheet.rules[ii];
+                if (styleSheet.rules != null)
+                    cssRule = styleSheet.rules[ii];
 			}
 
 		    if (cssRule) {
@@ -135,19 +134,29 @@ function createFilterBar()
 	filterEl = document.createElement('div');
 	filterEl.setAttribute('id', 'unity_log_filter');
 
+    // add filter level links/buttons
 	for (var i in unityLogTypes)
 	{
 		filterEl.innerHTML += "<a href='#unity_log' title='Toggle all " + unityLogTypes[i] + " messages.' onclick='toggleUnityLogFilter(this, \"" + unityLogTypes[i].toLowerCase() + "\");'>" + unityLogTypes[i] + "</a> ";
 	}
+    
+    // add save log link
+	filterEl.innerHTML += '&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" onclick="downloadlog();return false;" download="WebPlayer_Log.txt">DOWNLOAD LOGFILE</a>';
 
 	unityLogEl.parentNode.insertBefore(filterEl, unityLogEl.nextSibling);
 }
 
-
-function clearLogName(logname) {
-    return logname.replace(/\./g, "_").toLowerCase()
+function downloadlog() {
+    var currentLogText = unityLogEl.textContent;
+   
+    var blob = new Blob([currentLogText], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "WebPlayer_Log.txt");
 }
 
+
+function clearLogName(logname) {
+    return logname.replace(/\./g, "_").toLowerCase();
+}
 
 function unityLog(logname, logtype, msg) {
 	if (unityLogEl == null) {
@@ -305,11 +314,14 @@ function appendDefaultLogStyle() {
 		consoleLog('Could not apply log styles, head-element not found!');
 		return;
 	}
+    
 	var css = document.createElement('style');
 	css.type = 'text/css';
 
-	if (css.styleSheet) css.styleSheet.cssText = getDefaultLogStyles();
-	else css.appendChild(document.createTextNode(getDefaultLogStyles()));
+	if (css.styleSheet)
+	    css.styleSheet.cssText = getDefaultLogStyles();
+	else
+	    css.appendChild(document.createTextNode(getDefaultLogStyles()));
 
 	if (typeof document.getElementsByTagName('head')[0] == 'object')
 		document.getElementsByTagName('head')[0].appendChild(css);
