@@ -293,7 +293,7 @@ function toggleLogScrolling()
 }
 
 function getDefaultLogStyles() {
-	var styles = '#unity_log { background-color: #000; font-size: 11pt; height: 250px; width: 100%; border: 1px solid grey; overflow: auto; text-align: left; }\n';
+    var styles = '#unity_log { background-color: #000; font-size: 11pt; height: 250px; width: 100%; border: 1px solid grey; overflow: auto; text-align: left;  resize: both; }\n';
 	styles += '.unity_log_entry_debug { color: lightgreen; }\n';
 	styles += '.unity_log_entry_info { color: lightblue; font-weight: bold }\n';
 	styles += '.unity_log_entry_error { color: red; font-weight: normal }\n';

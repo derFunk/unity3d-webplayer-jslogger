@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using ChimeraEntertainment.Unity3DJavascriptLogger;
 
 public class JsLoggerCallback : MonoBehaviour
@@ -10,6 +9,8 @@ public class JsLoggerCallback : MonoBehaviour
 		
 	void Awake()
 	{
+        DontDestroyOnLoad(transform.gameObject);
+
 		jsLogger = new JavascriptLogger();
 		
 		// Register the javascript logger for the standard unity log output.
