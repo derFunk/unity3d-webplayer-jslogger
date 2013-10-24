@@ -13,6 +13,7 @@ WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 
 window.unityLogScrollingEnabled = true;
 
+var unityLogElContainer = document.getElementById('unity_log_container');
 var unityLogEl = document.getElementById('unity_log');
 var unityLogStopBtn = document.getElementById('unity_log_stop_button');
 var unityLogTypes = new Array('TRACE', 'INFO','DEBUG','WARN', 'ERROR', 'FATAL');
@@ -28,6 +29,10 @@ if (typeof unity_log_max_entries == 'undefined')
 function doubleZero(intgr) {
 	if (intgr < 10) return ('0'.concat(String(intgr)));
 	return intgr;
+}
+
+function enableConsoleLog(enabled) {
+    consoleLogEnabled = enabled;
 }
 
 function consoleLog(str) {
@@ -239,7 +244,7 @@ function scrollUnityLogToBottom()
 
 /* This function must be safe to be callable multiple times! */
 function ensureLog() {
-	if (unityLogEl != null) {
+    if (document.getElementById('unity_log') != null) {
 		consoleLog('log div already exists!');
 		return; /* already exists */
 	}
@@ -262,17 +267,45 @@ function ensureLog() {
 	}
 }
 
+function removeUnityLog() {
+    consoleLog('removing log from DOM');
+    
+    if (unityLogElContainer == null) {
+        consoleLog('no log found to be removed');
+        return;
+    }
+    
+    unityLogElContainer.parentNode.removeChild(unityLogElContainer);
+    consoleLog('done removing log');
+}
 
 function createUnityLog()
 {
-	if (unityLogEl != null) {
+    if (typeof document.getElementById('unity_log_container') == "undefined") {
+        return false; /* already exists */
+    }
+    
+    if (typeof document.getElementById('unity_log') == "undefined") {
 		return false; /* already exists */
 	}
 	
+	unityLogElContainer = document.createElement('div');
+	unityLogElContainer.setAttribute('id', 'unity_log_container');
+
+    // check if css position of unityPlayerEl is absolute
+    // https://developer.mozilla.org/en-US/docs/Web/API/window.getComputedStyle?redirectlocale=en-US&redirectslug=DOM%2Fwindow.getComputedStyle
+	var playerStyle = window.getComputedStyle(unityPlayerEl);
+	if (playerStyle.getPropertyValue('position') == "absolute") {
+	    var containerStyleCssText = "position: absolute; top: " + ((parseInt(unityPlayerEl.offsetHeight) + parseInt(unityPlayerEl.offsetTop))) + "px; ";
+	    unityLogElContainer.style.cssText = containerStyleCssText;
+	}
+    
 	unityLogEl = document.createElement('div');
 	unityLogEl.setAttribute('id', 'unity_log');
 
-	unityPlayerEl.parentNode.insertBefore(unityLogEl, unityPlayerEl.nextSibling);
+	unityLogElContainer.appendChild(unityLogEl);
+    
+	unityPlayerEl.parentNode.insertBefore(unityLogElContainer, unityPlayerEl.nextSibling);
 
 	if (unityLogStopBtn == null) {
 		unityLogStopBtn = document.createElement('input');
@@ -326,7 +359,3 @@ function appendDefaultLogStyle() {
 	if (typeof document.getElementsByTagName('head')[0] == 'object')
 		document.getElementsByTagName('head')[0].appendChild(css);
 }
-
-
-/* IMPORTANT: CALL HERE for init*/
-ensureLog();

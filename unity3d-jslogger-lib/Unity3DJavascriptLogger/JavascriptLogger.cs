@@ -40,7 +40,22 @@ namespace ChimeraEntertainment.Unity3DJavascriptLogger
 			: this(new JavascriptLoggerDispatchAction())
 		{
 		}
-		
+
+	    public void EnableConsoleDebugLog(bool enable)
+	    {
+	        Dispatcher.EvalJs(enable ? "enableConsoleLog(true);" : "enableConsoleLog(false);");
+	    }
+
+	    public void RemoveLog()
+        {
+            Dispatcher.EvalJs("removeUnityLog();");
+        }
+
+        public void StartLog()
+        {
+            Dispatcher.EvalJs("ensureLog();");
+        }
+
 		public void SetMaxLogEntries(int max)
 		{
 			Dispatcher.EvalJs("unity_log_max_entries = " + max + ";");
